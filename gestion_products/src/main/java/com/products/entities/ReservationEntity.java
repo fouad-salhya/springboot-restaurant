@@ -39,10 +39,6 @@ public class ReservationEntity implements Serializable {
 	@Column 
 	private String message;
      
-	@Column
-    private LocalDateTime reservationDate;
-	
-	
 
 	@ManyToOne
 	@JoinColumn(name = "user_id")
@@ -55,6 +51,9 @@ public class ReservationEntity implements Serializable {
 
 	@Column
 	private int total_person;
+	
+	@Column
+	private LocalDateTime reservationDate;
 
 	public long getId() {
 		return id;

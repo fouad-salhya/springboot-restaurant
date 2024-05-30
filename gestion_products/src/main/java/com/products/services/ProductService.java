@@ -1,5 +1,6 @@
 package com.products.services;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -62,15 +63,27 @@ public class ProductService {
         reservation.setReservationId(utils.generateStringId(32));
         reservationRepository.save(reservation);
 
-        emailService.sendEmail(reservation.getEmail());
+        sendConfirmationEmail(reservation);
     }
 	private void sendConfirmationEmail(ReservationEntity reservation) {
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
         try {
+        	
+        	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy 'à' HH:mm");
+            String formattedDate = reservation.getReservationDate().format(formatter);
+        	
             helper.setTo(reservation.getEmail());
-            helper.setSubject("Confirmation de réception de votre formulaire");
-            helper.setText("Bonjour " + reservation.getEmail() + ",\n\nVotre description: ");
+            helper.setSubject("Confirmation de reservation d'une table from Restoran");
+            
+            String htmlContent = "<h4>Bonjour " + reservation.getName() + ",</h4>" +
+                  
+                    "<h5>Merci pour votre réservation.</h5>"+
+                    "<p>Nombre de personnes: " + reservation.getTotal_person() + "</p>" +
+                    "<h5>date et time" +  formattedDate + ".</h5>" +
+                    "<p>Nous sommes impatients de vous accueillir !</p>";
+
+            helper.setText(htmlContent, true);
         } catch (Exception e) {
             e.printStackTrace(); //e
         }
